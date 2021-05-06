@@ -1,0 +1,103 @@
+openapi: 3.0.0
+info:
+  title: UEDigitalEntity API
+  description: NBI for UE Digital Entity
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /requirments:
+    get:
+      summary: get device requirments
+      description: |
+        Get the requirments of the associated physical device
+      operationId: getUERequirments
+      responses:
+        "200":
+          description: The requested requirments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Requirments'
+                x-content-type: application/json
+        "404":
+          description: No requirment found
+      x-swagger-router-controller: Requirments
+    post:
+      summary: create device requirments
+      description: |
+        Create the requirments of the associated physical device
+      operationId: createUERequirments
+      responses:
+        "200":
+          description: Requirments sucessefully created
+      x-swagger-router-controller: Requirments
+    patch:
+      summary: update device requirments
+      description: |
+        Update the requirments of the associated physical device
+      operationId: updateUERequirments
+      responses:
+        "200":
+          description: The requirments to be updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Requirments'
+                x-content-type: application/json
+      x-swagger-router-controller: Requirments
+  /connection-state:
+    get:
+      summary: get the device connection state
+      description: |
+        Get the connection state of the UE
+      operationId: getUEConnectionState
+      responses:
+        "200":
+          description: "The connection information of the UE (such as PDU Sessions,\
+            \ QoS flows...)"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectionInfo'
+                x-content-type: application/json
+        "404":
+          description: No requirment found
+      x-swagger-router-controller: ConnectionState
+components:
+  schemas:
+    Requirments:
+      type: object
+      properties:
+        field1:
+          type: integer
+        field2:
+          type: string
+        field3:
+          type: string
+      example:
+        field1: 0
+        field3: field3
+        field2: field2
+    ConnectionInfo:
+      type: object
+      properties:
+        field1:
+          type: integer
+        field2:
+          type: string
+        field3:
+          type: string
+      example:
+        field1: 0
+        field3: field3
+        field2: field2
