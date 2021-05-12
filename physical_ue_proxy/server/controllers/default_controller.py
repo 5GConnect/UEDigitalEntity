@@ -31,4 +31,4 @@ def get_device_imsi():  # noqa: E501
     :rtype: Supi
     """
     result = cli_command_handler.get_info()
-    return {"deviceId": result['supi']}
+    return result['supi']
