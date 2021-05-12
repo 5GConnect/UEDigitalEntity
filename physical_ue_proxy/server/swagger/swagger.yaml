@@ -1,0 +1,80 @@
+openapi: 3.0.0
+info:
+  title: PhysicalUEProxy API
+  description: SBI for UE physical proxy
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /deviceId:
+    get:
+      summary: get the device imsi
+      description: |
+        Get the imsi of the controlled device
+      operationId: get_device_imsi
+      responses:
+        "200":
+          description: The device imsi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Supi'
+        default:
+          description: Generic-error
+      x-openapi-router-controller: server.controllers.default_controller
+  /pduSession:
+    post:
+      summary: create a new PDU Session
+      description: |
+        Create a new PDU Session for the UE.
+      operationId: create_pdu_session
+      parameters:
+      - name: selected_session
+        in: query
+        description: Selected Session information
+        required: true
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/SelectedSession'
+      responses:
+        "200":
+          description: PduSession creation triggered
+        default:
+          description: Generic-error
+      x-openapi-router-controller: server.controllers.default_controller
+components:
+  schemas:
+    Supi:
+      pattern: "^(imsi-[0-9]{5,15}|nai-.+|gci-.+|gli-.+|.+)$"
+      type: string
+    SelectedSession:
+      required:
+      - sst
+      type: object
+      properties:
+        sst:
+          maximum: 255
+          minimum: 0
+          type: integer
+        sd:
+          pattern: "^[A-Fa-f0-9]{6}$"
+          type: string
+        dnn:
+          type: string
+        pduSessionTypes:
+          $ref: '#/components/schemas/PduSessionType'
+    PduSessionType:
+      anyOf:
+      - type: string
+        enum:
+        - IPV4
+        - IPV6
+        - IPV4V6
+        - UNSTRUCTURED
+        - ETHERNET
+      - type: string
+

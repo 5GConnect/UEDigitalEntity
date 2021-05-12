@@ -3,4 +3,4 @@ backend/node_modules/
 
 physical_ue_proxy/.idea/
 
-physical_ue_proxy/server/__pycache__/
+__pycache__/
