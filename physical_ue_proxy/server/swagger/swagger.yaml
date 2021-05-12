@@ -25,6 +25,22 @@ paths:
         default:
           description: Generic-error
       x-openapi-router-controller: server.controllers.default_controller
+  /deviceStatus:
+    get:
+      summary: get the device status
+      description: |
+        Get the device status
+      operationId: get_device_status
+      responses:
+        "200":
+          description: The device status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceStatus'
+        default:
+          description: Generic-error
+      x-openapi-router-controller: server.controllers.default_controller
   /pduSession:
     post:
       summary: create a new PDU Session
@@ -76,5 +92,22 @@ components:
         - IPV4V6
         - UNSTRUCTURED
         - ETHERNET
+    CellConnectionStatus:
+      anyOf:
       - type: string
+        enum:
+        - CM-CONNECTED
+        - CM-IDLE
+    DeviceStatus:
+      required:
+      - status
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/CellConnectionStatus'
+        camped-cell:
+          type: string
+      example:
+        camped-cell: camped-cell
+        status: ""
 

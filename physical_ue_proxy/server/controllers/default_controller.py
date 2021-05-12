@@ -8,27 +8,44 @@ from server.controllers.config import *
 
 
 def create_pdu_session(selected_session):  # noqa: E501
-    """create a new PDU Session
+	"""create a new PDU Session
 
-    Create a new PDU Session for the UE.  # noqa: E501
+	Create a new PDU Session for the UE.  # noqa: E501
 
-    :param selected_session: Selected Session information
-    :type selected_session: dict | bytes
+	:param selected_session: Selected Session information
+	:type selected_session: dict | bytes
 
-    :rtype: None
-    """
-    if connexion.request.is_json:
-        selected_session = SelectedSession.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+	:rtype: None
+	"""
+	if connexion.request.is_json:
+		selected_session = SelectedSession.from_dict(connexion.request.get_json())  # noqa: E501
+	return 'do some magic!'
 
 
 def get_device_imsi():  # noqa: E501
-    """get the device imsi
+	"""get the device imsi
 
-    Get the imsi of the controlled device  # noqa: E501
+	Get the imsi of the controlled device  # noqa: E501
 
 
-    :rtype: Supi
-    """
-    result = cli_command_handler.get_info()
-    return result['supi']
+	:rtype: Supi
+	"""
+	result = cli_command_handler.get_info()
+	return result['supi']
+
+
+def get_device_status():  # noqa: E501
+	"""get the device status
+
+	Get the device status  # noqa: E501
+
+
+	:rtype: DeviceStatus
+	"""
+	status = cli_command_handler.get_status()
+	result = {
+		"status": status['cm-state']
+	}
+	if status['cm-state'] == 'CM-CONNECTED':
+		result["camped-cell"] = status['camped-cell']
+	return result

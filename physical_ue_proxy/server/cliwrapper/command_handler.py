@@ -37,3 +37,6 @@ class CliCommandHandler:
 
 	def get_info(self):
 		return self.__run_command_and_get_dict(CliCommand.Info.value)
+
+	def get_status(self):
+		return self.__run_command_and_get_dict(CliCommand.Status.value)
