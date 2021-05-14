@@ -17,9 +17,12 @@ def create_pdu_session(selected_session):  # noqa: E501
 
 	:rtype: None
 	"""
-	if connexion.request.is_json:
-		selected_session = SelectedSession.from_dict(connexion.request.get_json())  # noqa: E501
-	return 'do some magic!'
+	# if connexion.request.is_json:
+	# 	selected_session = SelectedSession.from_dict(connexion.request.get_json())  # noqa: E501
+
+	result = cli_command_handler.establish_pdu_session(selected_session['sst'], selected_session['sd'], selected_session['dnn'],
+	                                          selected_session['pduSessionType'])
+	return result
 
 
 def get_device_imsi():  # noqa: E501

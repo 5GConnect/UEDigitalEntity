@@ -3,6 +3,7 @@ from os import read
 import re
 import yaml
 from server.cliwrapper.commands import CliCommand
+import time
 
 
 class CliCommandHandler:
@@ -35,8 +36,30 @@ class CliCommandHandler:
 		result = self.__remove_useless_characters(self.__get_output())
 		return yaml.safe_load(result)
 
+	def __run_command(self, command):
+		self.process.stdin.write(command)
+		self.process.stdin.flush()
+		self.__get_output()
+
 	def get_info(self):
 		return self.__run_command_and_get_dict(CliCommand.Info.value)
 
 	def get_status(self):
 		return self.__run_command_and_get_dict(CliCommand.Status.value)
+
+	def establish_pdu_session(self, sst, sd, dnn, session_type):
+		# Technical Debt: We do not need to check pdu session with status command, but with SMF API (event subscriptio).
+		# The API is not available in O5GS already.
+		pdu_sessions = self.get_status()['pdu-sessions']
+		pdu_sessions_actual_length = pdu_sessions_previous_length = 0 if pdu_sessions is None else len(pdu_sessions)
+		self.__run_command(
+			CliCommand.PduSessionEstablish.value.format(session_type=session_type, sst=sst, sd=sd, dnn=dnn))
+		actual_time = time.time()
+		end_time = actual_time + 2  # try for max 2 seconds
+		while actual_time < end_time and pdu_sessions_previous_length <= pdu_sessions_actual_length:
+			pdu_sessions = self.get_status()['pdu-sessions']
+			actual_time = time.time()
+			pdu_sessions_actual_length = 0 if pdu_sessions is None else len(pdu_sessions)
+		result = pdu_sessions[-1]
+		del result['type']
+		return result

@@ -58,7 +58,11 @@ paths:
           $ref: '#/components/schemas/SelectedSession'
       responses:
         "200":
-          description: PduSession creation triggered
+          description: Pdu Session sucessfully established
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionInfo'
         default:
           description: Generic-error
       x-openapi-router-controller: server.controllers.default_controller
@@ -67,6 +71,18 @@ components:
     Supi:
       pattern: "^(imsi-[0-9]{5,15}|nai-.+|gci-.+|gli-.+|.+)$"
       type: string
+    SessionInfo:
+      required:
+      - id
+      - ipAddress
+      type: object
+      properties:
+        id:
+          type: integer
+        ipAddress:
+          $ref: '#/components/schemas/IpAddress'
+        emergency:
+            type: boolean
     SelectedSession:
       required:
       - sst
@@ -81,8 +97,9 @@ components:
           type: string
         dnn:
           type: string
-        pduSessionTypes:
-          $ref: '#/components/schemas/PduSessionType'
+        pduSessionType:
+          type: string
+          enum: [IPV4, IPV6, IPV4V6, UNSTRUCTURED, ETHERNET]
     PduSessionType:
       anyOf:
       - type: string
@@ -110,4 +127,71 @@ components:
       example:
         camped-cell: camped-cell
         status: ""
-
+    EstablishedSession:
+      required:
+      - address
+      - dnn
+      - sd
+      - sst
+      type: object
+      properties:
+        id:
+          type: integer
+        sst:
+          maximum: 255
+          minimum: 0
+          type: integer
+        sd:
+          pattern: "^[A-Fa-f0-9]{6}$"
+          type: string
+        dnn:
+          type: string
+        pduSessionTypes:
+          $ref: '#/components/schemas/PduSessionType'
+        address:
+          $ref: '#/components/schemas/IpAddress'
+      example:
+        sd: sd
+        address: "{}"
+        sst: 153
+        dnn: dnn
+        pduSessionTypes: ""
+        id: 0
+    IpAddress:
+      type: object
+      properties:
+        ipv4Addr:
+          $ref: '#/components/schemas/Ipv4Addr'
+        ipv6Addr:
+          $ref: '#/components/schemas/Ipv6Addr'
+        ipv6Prefix:
+          $ref: '#/components/schemas/Ipv6Prefix'
+      example:
+        ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+        ipv4Addr: 198.51.100.1
+        ipv6Prefix: 2001:db8:abcd:12::0/64
+      oneOf:
+      - required:
+        - ipv4Addr
+      - required:
+        - ipv6Addr
+      - required:
+        - ipv6Prefix
+    Ipv4Addr:
+      pattern: "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$"
+      type: string
+      example: 198.51.100.1
+    Ipv6Addr:
+      type: string
+      example: 2001:db8:85a3::8a2e:370:7334
+      allOf:
+      - pattern: "^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))$"
+      - pattern: "^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))$"
+    Ipv6Prefix:
+      type: string
+      example: 2001:db8:abcd:12::0/64
+      allOf:
+      - pattern: "^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\\\
+          /(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))$"
+      - pattern: "^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\\\
+          /.+)$"
