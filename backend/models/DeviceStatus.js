@@ -21,11 +21,8 @@ module.exports = deviceStatus = (function() {
             status = 'UNKNOWN'
             campedCell = null
         },
-        toJSON() {
-            return {
-                status: status,
-                campedCell: campedCell
-            }
+        toString() {
+            return `{status: ${status},campedCell: ${campedCell}}`
         }
     };
 })();

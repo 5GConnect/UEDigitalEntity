@@ -53,25 +53,24 @@ paths:
                   $ref: '#/components/schemas/Requirments'
                 x-content-type: application/json
       x-swagger-router-controller: Requirments
-  /connection-state:
+  /gnb-connection-state:
     get:
-      summary: get the device connection state
+      summary: get the UE connection state with gNB
       description: |
-        Get the connection state of the UE
-      operationId: getUEConnectionState
+        Get the connection state of the UE with gNB
+      operationId: getGnbConnectionState
       responses:
         "200":
-          description: "The connection information of the UE (such as PDU Sessions,\
-            \ QoS flows...)"
+          description: "The connection information of the UE with gNB (connectionState, gNB id)"
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ConnectionInfo'
+                  $ref: '#/components/schemas/GnbConnectionState'
                 x-content-type: application/json
-        "404":
-          description: No requirment found
+        default:
+          description: Generic-error
       x-swagger-router-controller: ConnectionState
   /subscription-info:
     get:
@@ -90,23 +89,51 @@ paths:
         default:
           description: Generic-error
       x-swagger-router-controller: Subscription
+  /pdu-session:
+    get:
+      summary: get the user equipment established PDU Sessions
+      description: |
+        Get the user equipment established PDU Sessions
+      operationId: getUEPDUSessions
+      responses:
+        "200":
+          description: The established PDU Sessions informations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EstablishedSession'
+                x-content-type: application/json
+      x-swagger-router-controller: ConnectionState
+    post:
+      summary: create a new PDU Session
+      description: |
+        Create a new PDU Session for the UE.
+      operationId: createPDUSession
+      parameters:
+      - name: selected_session
+        in: query
+        description: Selected Session information
+        required: true
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/SelectedSession'
+      responses:
+        "200":
+          description: Pdu Session sucessfully established
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstablishedSession'
+        default:
+          description: Generic-error
+      x-swagger-router-controller: ConnectionState
 
 components:
   schemas:
     Requirments:
-      type: object
-      properties:
-        field1:
-          type: integer
-        field2:
-          type: string
-        field3:
-          type: string
-      example:
-        field1: 0
-        field3: field3
-        field2: field2
-    ConnectionInfo:
       type: object
       properties:
         field1:
@@ -393,12 +420,12 @@ components:
       type: object
       properties:
         defaultSessionType:
-          $ref: '#/components/schemas/PduSessionType'
+          $ref: '#/components/schemas/PduSessionType_2'
         allowedSessionTypes:
           minItems: 1
           type: array
           items:
-            $ref: '#/components/schemas/PduSessionType'
+            $ref: '#/components/schemas/PduSessionType_2'
       example:
         defaultSessionType: ""
         allowedSessionTypes:
@@ -422,6 +449,82 @@ components:
         - null
         - null
         defaultSscMode: ""
+    CellConnectionStatus:
+      anyOf:
+      - type: string
+        enum:
+        - gNB_CONNECTED
+        - gNB_NOT_CONNECTED
+    GnbConnectionState:
+      required:
+      - status
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/CellConnectionStatus'
+        camped-cell:
+          type: string
+      example:
+        camped-cell: camped-cell
+        status: ""
+    PduSessionType:
+      anyOf:
+      - type: string
+        enum:
+        - IPV4
+        - IPV6
+        - IPV4V6
+        - UNSTRUCTURED
+        - ETHERNET
+    SelectedSession:
+      required:
+      - sst
+      type: object
+      properties:
+        sst:
+          maximum: 255
+          minimum: 0
+          type: integer
+        sd:
+          pattern: "^[A-Fa-f0-9]{6}$"
+          type: string
+        dnn:
+          type: string
+        pduSessionType:
+          $ref: '#/components/schemas/PduSessionType'
+    EstablishedSession:
+      required:
+      - address
+      - dnn
+      - sd
+      - sst
+      type: object
+      properties:
+        id:
+          type: integer
+        sst:
+          maximum: 255
+          minimum: 0
+          type: integer
+        sd:
+          pattern: "^[A-Fa-f0-9]{6}$"
+          type: string
+        dnn:
+          type: string
+        pduSessionTypes:
+          $ref: '#/components/schemas/PduSessionType'
+        address:
+          $ref: '#/components/schemas/IpAddress'
+      example:
+        sd: sd
+        address:
+          ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+          ipv4Addr: 198.51.100.1
+          ipv6Prefix: 2001:db8:abcd:12::0/64
+        sst: 153
+        dnn: dnn
+        pduSessionTypes: ""
+        id: 0
     AmbrRm:
       anyOf:
       - $ref: '#/components/schemas/Ambr'
@@ -528,7 +631,7 @@ components:
           /(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))$"
       - pattern: "^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\\\
           /.+)$"
-    PduSessionType:
+    PduSessionType_2:
       anyOf:
       - type: string
         enum:

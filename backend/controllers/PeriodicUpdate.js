@@ -14,7 +14,7 @@ function getGnbConnectionStatus() {
             somethingHasChanged = deviceStatusModel.updateStatus(receivedStatus) || somethingHasChanged
             somethingHasChanged = deviceStatusModel.updateCampedCell(receivedCampedCell) || somethingHasChanged
             if (somethingHasChanged) {
-                logger.info(`Sending status update ${JSON.stringify(deviceStatusModel)}`)
+                logger.info(`Sending status update ${deviceStatusModel.toString()}`)
             }
         })
         .catch(errorObject => {

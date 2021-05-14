@@ -43,4 +43,3 @@ wss.on('connection', (ws) => {
         }
     });
 });
-updateController.startPolling();
