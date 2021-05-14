@@ -34,7 +34,7 @@ def get_device_imsi():  # noqa: E501
 	return result['supi']
 
 
-def get_device_status():  # noqa: E501
+def get_gnb_connection_state():  # noqa: E501
 	"""get the device status
 
 	Get the device status  # noqa: E501

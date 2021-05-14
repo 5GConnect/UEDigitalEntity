@@ -9,7 +9,7 @@ info:
 servers:
 - url: /
 paths:
-  /deviceId:
+  /device-id:
     get:
       summary: get the device imsi
       description: |
@@ -25,23 +25,23 @@ paths:
         default:
           description: Generic-error
       x-openapi-router-controller: server.controllers.default_controller
-  /deviceStatus:
+  /gnb-connection-state:
     get:
-      summary: get the device status
+      summary: get the UE connection state with gNB
       description: |
-        Get the device status
-      operationId: get_device_status
+        get the UE connection state with gNB
+      operationId: get_gnb_connection_state
       responses:
         "200":
-          description: The device status
+          description: The UE connection state with gNB
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeviceStatus'
+                $ref: '#/components/schemas/GnbConnectionState'
         default:
           description: Generic-error
       x-openapi-router-controller: server.controllers.default_controller
-  /pduSession:
+  /pdu-session:
     post:
       summary: create a new PDU Session
       description: |
@@ -98,7 +98,7 @@ components:
         enum:
         - CM-CONNECTED
         - CM-IDLE
-    DeviceStatus:
+    GnbConnectionState:
       required:
       - status
       type: object

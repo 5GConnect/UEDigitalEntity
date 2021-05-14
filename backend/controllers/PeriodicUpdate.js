@@ -5,8 +5,8 @@ const deviceStatusModel = require('../models/DeviceStatus')
 let updateProcessIds = []
 let started = false;
 
-function getDeviceStatus() {
-    return deviceInfoHandler.getDeviceStatus()
+function getGnbConnectionStatus() {
+    return deviceInfoHandler.getGnbConnectionStatus()
         .then(result => {
             let receivedStatus = result.status
             let receivedCampedCell = result['camped-cell']
@@ -22,9 +22,9 @@ function getDeviceStatus() {
         })
 }
 
-function manageDeviceStatusUpdate() {
+function manageGnbConnectionStatusUpdate() {
     var processId = setInterval(function() {
-        getDeviceStatus()
+        getGnbConnectionStatus()
     }, process.env.POLLING_STATUS_UPDATE_TIME_IN_MS);
     updateProcessIds.push(processId);
 }
@@ -32,8 +32,7 @@ function manageDeviceStatusUpdate() {
 module.exports.startPolling = () => {
     if (!started) {
         logger.info("Start polling");
-        getDeviceStatus();
-        manageDeviceStatusUpdate();
+        manageGnbConnectionStatusUpdate();
     }
 }
 

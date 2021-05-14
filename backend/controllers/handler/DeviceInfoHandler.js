@@ -13,7 +13,7 @@ module.exports.getDeviceId = () => {
 /**
  * @returns a promise resolved with the device status (connection status and possibly the gNB id) or rejected with an error
  */
-module.exports.getDeviceStatus = () => {
+module.exports.getGnbConnectionStatus = () => {
     logger.info("Obtaining device status");
-    return requestManager.makeARequest('GET', `${process.env.PHYSICAL_UE_PROXY_ADDRESS}/deviceStatus`, data => data)
+    return requestManager.makeARequest('GET', `${process.env.PHYSICAL_UE_PROXY_ADDRESS}/gnb-connection-state`, data => data)
 }

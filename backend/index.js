@@ -24,8 +24,7 @@ var app = expressAppConfig.getApp();
 
 // Initialize the Swagger middleware
 let server = http.createServer(app).listen(serverPort, function() {
-    logger.info('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
-    logger.info('Swagger-ui is available on http://localhost:%d/docs', serverPort);
+    logger.info(`Your server is listening on port ${serverPort}`);
 });
 
 const wss = new ws.Server({ server: server });
