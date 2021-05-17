@@ -11,7 +11,8 @@ module.exports.getGnbConnectionState = function getUEConnectionState(req, res, n
         .catch(errorObject => errorObject.status ? res.status(errorObject.status).send(errorObject.message) : res.send(errorObject.message))
 };
 
-module.exports.createPDUSession = function createPDUSession(req, res, next, selected_session) {
+module.exports.createPDUSession = function createPDUSession(req, res, next) {
+    let selected_session = req.body
     return deviceInfoHandler.establishPduSession(selected_session.sst, selected_session.sd, selected_session.dnn, selected_session.pduSessionType)
         .then(result => {
             logger.verbose(`Sending response: ${JSON.stringify(result)}`);
@@ -30,5 +31,6 @@ module.exports.createPDUSession = function createPDUSession(req, res, next, sele
 };
 
 module.exports.getUEPDUSessions = function getUEPDUSessions(req, res, next) {
-    res.status(200).json(pduSessionsModel.getSessions());
+    console.log(pduSessionsModel.getSessions())
+    res.status(200).send(pduSessionsModel.getSessions());
 };

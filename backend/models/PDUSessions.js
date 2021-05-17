@@ -17,7 +17,7 @@ class EstablishPduSession {
             sd: this.sd,
             dnn: this.dnn,
             pduSessionType: this.type,
-            address: this.address,
+            address: this.ipAddress,
             emergency: this.emergency,
             id: this.id
         }

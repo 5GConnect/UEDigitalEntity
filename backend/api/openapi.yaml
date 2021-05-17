@@ -65,10 +65,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/GnbConnectionState'
-                x-content-type: application/json
+                $ref: '#/components/schemas/GnbConnectionState'
         default:
           description: Generic-error
       x-swagger-router-controller: ConnectionState
@@ -111,22 +108,26 @@ paths:
       description: |
         Create a new PDU Session for the UE.
       operationId: createPDUSession
-      parameters:
-      - name: selected_session
-        in: query
-        description: Selected Session information
-        required: true
-        style: form
-        explode: true
-        schema:
-          $ref: '#/components/schemas/SelectedSession'
+      requestBody:
+        #required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectedSession'
       responses:
         "200":
           description: Pdu Session sucessfully established
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EstablishedSession'
+                type: object
+                properties:
+                  address:
+                    type: string
+                  emergency:
+                    type: boolean
+                  id:
+                    type: integer
         default:
           description: Generic-error
       x-swagger-router-controller: ConnectionState
@@ -314,7 +315,10 @@ components:
           pattern: "^[A-Fa-f0-9]{6}$"
           type: string
         dnnConfigurations:
-          $ref: '#/components/schemas/DnnConfiguration'
+          description: A map (list of key-value pairs where Dnn, or optionally the Wildcard DNN, serves as key) of DnnConfigurations
+          type: object
+          additionalProperties:
+             $ref: '#/components/schemas/DnnConfiguration'
       example:
         dnnConfigurations:
           sessionAmbr:
@@ -439,7 +443,7 @@ components:
         defaultSscMode:
           $ref: '#/components/schemas/SscMode'
         allowedSscModes:
-          maxItems: 2
+          maxItems: 3
           minItems: 1
           type: array
           items:
@@ -453,8 +457,8 @@ components:
       anyOf:
       - type: string
         enum:
-        - gNB_CONNECTED
-        - gNB_NOT_CONNECTED
+        - CM-CONNECTED
+        - CM-IDLE
     GnbConnectionState:
       required:
       - status
@@ -494,7 +498,7 @@ components:
           $ref: '#/components/schemas/PduSessionType'
     EstablishedSession:
       required:
-      - address
+      - ipAddress
       - dnn
       - sd
       - sst
@@ -513,8 +517,10 @@ components:
           type: string
         pduSessionTypes:
           $ref: '#/components/schemas/PduSessionType'
-        address:
-          $ref: '#/components/schemas/IpAddress'
+        ipAddress:
+          type: string
+        emergency:
+          type: boolean
       example:
         sd: sd
         address:
@@ -594,14 +600,14 @@ components:
       minimum: 1
       type: integer
       description: nullable true shall not be used for this attribute
-      nullable: true
+      #nullable: true
     PreemptionCapability:
       anyOf:
       - type: string
         enum:
         - NOT_PREEMPT
         - MAY_PREEMPT
-      - type: string
+      #- type: string
     PreemptionVulnerability:
       anyOf:
       - type: string
