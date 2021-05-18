@@ -31,6 +31,5 @@ module.exports.createPDUSession = function createPDUSession(req, res, next) {
 };
 
 module.exports.getUEPDUSessions = function getUEPDUSessions(req, res, next) {
-    console.log(pduSessionsModel.getSessions())
     res.status(200).send(pduSessionsModel.getSessions());
 };
