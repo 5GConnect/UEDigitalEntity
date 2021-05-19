@@ -79,4 +79,4 @@ class CliCommandHandler:
 			pdu_sessions_actual_length = 0 if pdu_sessions is None else len(pdu_sessions)
 		if pdu_sessions is not None:
 			result = pdu_sessions[-1]
-			return SessionInfo(id=result['id'], emergency=result['emergency'], ip_address=result['address'])
+			return SessionInfo(id=result['id'], emergency=result['emergency'], ip_address=IpAddress(ipv4_addr=result['address']))

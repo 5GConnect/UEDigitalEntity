@@ -16,7 +16,7 @@ module.exports.createPDUSession = function createPDUSession(req, res, next) {
     let selected_session = req.body
     return deviceInfoHandler.establishPduSession(selected_session)
         .then(result => {
-            logger.info(`Sending response: ${JSON.stringify(result)}`);
+            logger.verbose(`Sending response: ${JSON.stringify(result)}`);
             pduSessionsModel.addSession({
                 sst: selected_session.sst,
                 sd: selected_session.sd,
@@ -32,8 +32,6 @@ module.exports.createPDUSession = function createPDUSession(req, res, next) {
 };
 
 module.exports.getUEPDUSessions = function getUEPDUSessions(req, res, next) {
-    pduSessionsModel.getSessions().forEach(element => {
-        console.log(element.toJSON())
-    });
+    logger.verbose(`Sending response: ${JSON.stringify(pduSessionsModel.getSessions())}`);
     res.status(200).send(pduSessionsModel.getSessions());
 };

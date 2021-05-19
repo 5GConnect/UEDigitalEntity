@@ -8,8 +8,8 @@ class EstablishPduSession {
         this.emergency = emergency
         this.id = id
     }
-    equals(pduSession) {
-        return this.id === pduSession.id
+    equals(id) {
+        return this.id === id
     }
     toJSON() {
         return {
@@ -28,14 +28,18 @@ module.exports = pduSessions = (function() {
     var sessions = []
 
     return { // public interface
+        // Technical Debt: We do not need to check pdu session with status command, but with SMF API (event subscriptio).
+        //The API is not available in O5GS already.
         addSession(sessionInfo) {
-            sessions.push(new EstablishPduSession(sessionInfo.sst,
-                sessionInfo.sd,
-                sessionInfo.dnn,
-                sessionInfo.pduSessionType,
-                sessionInfo.ipAddress,
-                sessionInfo.emergency,
-                sessionInfo.id))
+            if (sessions.every(session => !session.equals(sessionInfo.id))) {
+                sessions.push(new EstablishPduSession(sessionInfo.sst,
+                    sessionInfo.sd,
+                    sessionInfo.dnn,
+                    sessionInfo.pduSessionType,
+                    sessionInfo.ipAddress,
+                    sessionInfo.emergency,
+                    sessionInfo.id))
+            }
         },
         removeSession(id) {
             //remove session
