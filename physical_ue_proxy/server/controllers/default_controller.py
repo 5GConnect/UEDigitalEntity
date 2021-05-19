@@ -3,6 +3,9 @@ import six
 
 from server.models.selected_session import SelectedSession  # noqa: E501
 from server.models.supi import Supi  # noqa: E501
+from server.models.gnb_connection_state import GnbConnectionState  # noqa: E501
+from server.models.cell_connection_status import CellConnectionStatus  # noqa: E501
+from server.models.base_model_ import Model
 from server import util
 from server.controllers.config import *
 
@@ -32,9 +35,8 @@ def get_device_imsi():  # noqa: E501
 
 	:rtype: Supi
 	"""
-	print("GET IMSI")
 	result = cli_command_handler.get_info()
-	return result['supi']
+	return Supi.from_dict(result['supi'])
 
 
 def get_gnb_connection_state():  # noqa: E501
@@ -45,11 +47,6 @@ def get_gnb_connection_state():  # noqa: E501
 
 	:rtype: DeviceStatus
 	"""
-	print("GET STATUS")
 	status = cli_command_handler.get_status()
-	result = {
-		"status": status['cm-state']
-	}
-	if status['cm-state'] == 'CM-CONNECTED':
-		result["camped-cell"] = status['camped-cell']
-	return result
+	t = GnbConnectionState(status=status["cm-state"], camped_cell=status["camped-cell"])
+	return t
