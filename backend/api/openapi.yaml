@@ -310,7 +310,6 @@ components:
           $ref: '#/components/schemas/PduSessionType'
         ipAddress:
           $ref: '#/components/schemas/IpAddress'
-          #type: string
         emergency:
           type: boolean
 

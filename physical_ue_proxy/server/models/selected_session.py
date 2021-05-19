@@ -16,7 +16,7 @@ class SelectedSession(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, sst: int=None, sd: str=None, dnn: str=None, pdu_session_types: PduSessionType=None):  # noqa: E501
+    def __init__(self, sst: int=None, sd: str=None, dnn: str=None, pdu_session_type: PduSessionType=None):  # noqa: E501
         """SelectedSession - a model defined in Swagger
 
         :param sst: The sst of this SelectedSession.  # noqa: E501
@@ -25,26 +25,26 @@ class SelectedSession(Model):
         :type sd: str
         :param dnn: The dnn of this SelectedSession.  # noqa: E501
         :type dnn: str
-        :param pdu_session_types: The pdu_session_types of this SelectedSession.  # noqa: E501
-        :type pdu_session_types: PduSessionType
+        :param pdu_session_type: The pdu_session_type of this SelectedSession.  # noqa: E501
+        :type pdu_session_type: PduSessionType
         """
         self.swagger_types = {
             'sst': int,
             'sd': str,
             'dnn': str,
-            'pdu_session_types': PduSessionType
+            'pdu_session_type': PduSessionType
         }
 
         self.attribute_map = {
             'sst': 'sst',
             'sd': 'sd',
             'dnn': 'dnn',
-            'pdu_session_types': 'pduSessionTypes'
+            'pdu_session_type': 'pduSessionType'
         }
         self._sst = sst
         self._sd = sd
         self._dnn = dnn
-        self._pdu_session_types = pdu_session_types
+        self._pdu_session_type = pdu_session_type
 
     @classmethod
     def from_dict(cls, dikt) -> 'SelectedSession':
@@ -123,22 +123,22 @@ class SelectedSession(Model):
         self._dnn = dnn
 
     @property
-    def pdu_session_types(self) -> PduSessionType:
-        """Gets the pdu_session_types of this SelectedSession.
+    def pdu_session_type(self) -> PduSessionType:
+        """Gets the pdu_session_type of this SelectedSession.
 
 
-        :return: The pdu_session_types of this SelectedSession.
+        :return: The pdu_session_type of this SelectedSession.
         :rtype: PduSessionType
         """
-        return self._pdu_session_types
+        return self._pdu_session_type
 
-    @pdu_session_types.setter
-    def pdu_session_types(self, pdu_session_types: PduSessionType):
-        """Sets the pdu_session_types of this SelectedSession.
+    @pdu_session_type.setter
+    def pdu_session_type(self, pdu_session_type: PduSessionType):
+        """Sets the pdu_session_type of this SelectedSession.
 
 
-        :param pdu_session_types: The pdu_session_types of this SelectedSession.
-        :type pdu_session_types: PduSessionType
+        :param pdu_session_type: The pdu_session_type of this SelectedSession.
+        :type pdu_session_type: PduSessionType
         """
 
-        self._pdu_session_types = pdu_session_types
+        self._pdu_session_type = pdu_session_type

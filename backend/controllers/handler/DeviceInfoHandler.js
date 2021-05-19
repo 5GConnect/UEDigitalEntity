@@ -21,7 +21,7 @@ module.exports.getGnbConnectionStatus = () => {
 /**
  * @returns a promise resolved with the info of the new established PDU session or rejected with an error
  */
-module.exports.establishPduSession = (sst, sd, dnn, pduSessionType) => {
+module.exports.establishPduSession = (selected_session) => {
     logger.info("Requesting PDU Session creation");
-    return requestManager.makeARequest('POST', `${process.env.PHYSICAL_UE_PROXY_ADDRESS}/pdu-session?selected_session[sst]=${sst}&selected_session[sd]=${sd}&selected_session[dnn]=${dnn}&selected_session[pduSessionType]=${pduSessionType}`, data => data)
+    return requestManager.makeARequestWithBodyData('POST', `${process.env.PHYSICAL_UE_PROXY_ADDRESS}/pdu-session`, selected_session, data => data)
 }

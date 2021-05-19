@@ -15,3 +15,19 @@ module.exports.makeARequest = (method, requestPath, onSuccess) => {
             })
     });
 }
+
+module.exports.makeARequestWithBodyData = (method, requestPath, data, onSuccess) => {
+    return new Promise((resolve, reject) => {
+        axios({
+                method: method,
+                url: requestPath,
+                data: data
+            })
+            .then(response => {
+                resolve(onSuccess(response.data))
+            })
+            .catch(error => {
+                reject(errorHandler.handleError(error))
+            })
+    });
+}

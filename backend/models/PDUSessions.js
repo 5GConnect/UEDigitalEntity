@@ -4,9 +4,7 @@ class EstablishPduSession {
         this.sd = sd
         this.dnn = dnn
         this.type = type
-        this.ipAddress = {
-            ipv4Addr: ipAddress
-        }
+        this.ipAddress = ipAddress
         this.emergency = emergency
         this.id = id
     }
@@ -19,9 +17,7 @@ class EstablishPduSession {
             sd: this.sd,
             dnn: this.dnn,
             pduSessionType: this.type,
-            ipAddress: {
-                ipv4Addr: this.ipAddress
-            },
+            ipAddress: this.ipAddress,
             emergency: this.emergency,
             id: this.id
         }
