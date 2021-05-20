@@ -1,3 +1,4 @@
+import os
 import subprocess
 from os import read
 import re
@@ -8,12 +9,16 @@ import threading
 from server.models.ip_address import IpAddress
 from server.models.ipv4_addr import Ipv4Addr
 from server.models.session_info import SessionInfo
+
+
 class CliCommandHandler:
 	process = None
 
 	def __init__(self, imsi):
-		self.process = subprocess.Popen("/home/birex/UERANSIM/build/nr-cli {imsi}".format(imsi=imsi), shell=True,
-		                                stdin=subprocess.PIPE, stdout=subprocess.PIPE, encoding='utf8')
+		self.process = subprocess.Popen(
+			"{base_dir}/build/nr-cli {imsi}".format(base_dir=os.environ.get("UERANSIM_BASE_DIR"), imsi=imsi),
+			shell=True,
+			stdin=subprocess.PIPE, stdout=subprocess.PIPE, encoding='utf8')
 		self.__get_output()  # Delete initial -------$
 
 	def synchronized(func):
@@ -28,8 +33,8 @@ class CliCommandHandler:
 
 	def __get_output(self):
 		output = ""
-		ansi_escape = re.compile(
-			b'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')  # '\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])'
+		ansi_escape = re.compile(br'(?:\x1B[@-Z\\-_]|[\x80-\x9A\x9C-\x9F]|(?:\x1B\[|\x9B)[0-?]*[ -/]*[@-~])')
+		# re.compile(b'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
 		while not output.endswith("\n$ "):  # read output till prompt
 			buffer = read(self.process.stdout.fileno(), 4096)
 			buffer = re.sub(ansi_escape, b'', buffer)
@@ -43,26 +48,31 @@ class CliCommandHandler:
 			string_to_clear = re.sub(pattern, '', string_to_clear)
 		return string_to_clear
 
+	@synchronized
 	def __run_command_and_get_dict(self, command):
 		self.process.stdin.write(command)
 		self.process.stdin.flush()
 		result = self.__remove_useless_characters(self.__get_output())
-		return yaml.safe_load(result)
+		try:
+			return yaml.safe_load(result)
+		except yaml.YAMLError as exc:
+			print(exc)
+			return {}
 
+
+	@synchronized
 	def __run_command(self, command):
 		self.process.stdin.write(command)
 		self.process.stdin.flush()
 		self.__get_output()
 
-	@synchronized
+
 	def get_info(self):
 		return self.__run_command_and_get_dict(CliCommand.Info.value)
 
-	@synchronized
 	def get_status(self):
 		return self.__run_command_and_get_dict(CliCommand.Status.value)
 
-	@synchronized
 	def establish_pdu_session(self, sst, sd, dnn, session_type):
 		# Technical Debt: We do not need to check pdu session with status command, but with SMF API (event subscriptio).
 		# The API is not available in O5GS already.
@@ -79,4 +89,5 @@ class CliCommandHandler:
 			pdu_sessions_actual_length = 0 if pdu_sessions is None else len(pdu_sessions)
 		if pdu_sessions is not None:
 			result = pdu_sessions[-1]
-			return SessionInfo(id=result['id'], emergency=result['emergency'], ip_address=IpAddress(ipv4_addr=result['address']))
+			return SessionInfo(id=result['id'], emergency=result['emergency'],
+			                   ip_address=IpAddress(ipv4_addr=result['address']))

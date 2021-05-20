@@ -4,3 +4,5 @@ backend/node_modules/
 physical_ue_proxy/.idea/
 
 __pycache__/
+
+physical_ue_proxy/venv/
