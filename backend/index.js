@@ -3,7 +3,6 @@ require('dotenv').config({ path: process.env.NODE_ENV === 'development' ? './.en
 var path = require('path');
 var http = require('http');
 const ws = require('ws');
-const updateController = require("./controllers/PeriodicUpdate")
 var cors = require('cors')
 
 const logger = require('./utils/logger');
@@ -39,6 +38,7 @@ oasTools.initialize(oasDoc, app, function() {
     module.exports = wss;
     wss.on('connection', (ws) => {
         logger.info('Client connected');
+        const updateController = require("./controllers/PeriodicUpdate")
         updateController.startPolling();
         ws.on('close', () => {
             logger.info('Client disconnected')

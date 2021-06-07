@@ -1,7 +1,7 @@
 const wss = require('../index');
 const deviceInfoHandler = require('./handler/DeviceInfoHandler')
 const logger = require('../utils/logger')
-const deviceStatusModel = require('../models/DeviceStatus')
+const deviceStatusModel = require('../models/DeviceStatus');
 let updateProcessIds = []
 let started = false;
 
@@ -15,9 +15,11 @@ function getGnbConnectionStatus() {
             somethingHasChanged = deviceStatusModel.updateCampedCell(receivedCampedCell) || somethingHasChanged
             if (somethingHasChanged) {
                 logger.info(`Sending status update ${deviceStatusModel.toString()}`)
+                sendDataToClient(deviceStatusModel.toString())
             }
         })
         .catch(errorObject => {
+            logger.error(errorObject)
             deviceStatusModel.resetDeviceStatus()
         })
 }
@@ -27,6 +29,12 @@ function manageGnbConnectionStatusUpdate() {
         getGnbConnectionStatus()
     }, process.env.POLLING_STATUS_UPDATE_TIME_IN_MS);
     updateProcessIds.push(processId);
+}
+
+function sendDataToClient(data) {
+    wss.clients.forEach((client) => {
+        client.send(data);
+    });
 }
 
 module.exports.startPolling = () => {

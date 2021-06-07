@@ -1,7 +1,6 @@
 module.exports = deviceStatus = (function() {
-    var status = 'UNKNOWN'
-    var campedCell = null
-
+    let status = 'UNKNOWN'
+    let campedCell = null
     return { // public interface
         updateStatus(receivedStatus) {
             if (status !== receivedStatus) {
@@ -22,7 +21,10 @@ module.exports = deviceStatus = (function() {
             campedCell = null
         },
         toString() {
-            return `{status: ${status},campedCell: ${campedCell}}`
+            return JSON.stringify({
+                "status": status,
+                "camped-cell": campedCell
+            })
         }
     };
 })();
