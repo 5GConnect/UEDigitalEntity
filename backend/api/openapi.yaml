@@ -117,17 +117,6 @@ paths:
       responses:
         "200":
           description: Pdu Session sucessfully established
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  address:
-                    type: string
-                  emergency:
-                    type: boolean
-                  id:
-                    type: integer
         default:
           description: Generic-error
       x-swagger-router-controller: ConnectionState
@@ -306,7 +295,7 @@ components:
           type: string
         dnn:
           type: string
-        pduSessionTypes:
+        pduSessionType:
           $ref: '#/components/schemas/PduSessionType'
         ipAddress:
           $ref: '#/components/schemas/IpAddress'

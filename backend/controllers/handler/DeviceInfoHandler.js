@@ -25,3 +25,8 @@ module.exports.establishPduSession = (selected_session) => {
     logger.info("Requesting PDU Session creation");
     return requestManager.makeARequestWithBodyData('POST', `${process.env.PHYSICAL_UE_PROXY_ADDRESS}/pdu-session`, selected_session, data => data)
 }
+
+module.exports.getPduSessions = () => {
+    logger.info("Obtaining established PDU Sessions");
+    return requestManager.makeARequest('GET', `${process.env.PHYSICAL_UE_PROXY_ADDRESS}/pdu-session`, data => data)
+}

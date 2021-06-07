@@ -8,5 +8,6 @@ class CliCommand(enum.Enum):
 	PduSessionEstablish = "ps-establish {session_type} --sst {sst} --sd {sd} --dnn {dnn}\n"
 	PduSessionRelease = "ps-release {session_id}\n"
 	PduSessionReleaseAll = "ps-release-all\n"
+	PduSessionList = "ps-list\n"
 	GnbCoverage = "coverage\n"
 	Deregister = "deregister {mode}\n"

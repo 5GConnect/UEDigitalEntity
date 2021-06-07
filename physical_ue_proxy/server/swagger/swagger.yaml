@@ -6,8 +6,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
-servers:
-- url: /
+
 paths:
   /device-id:
     get:
@@ -42,6 +41,25 @@ paths:
           description: Generic-error
       x-openapi-router-controller: server.controllers.default_controller
   /pdu-session:
+    get:
+      summary: get the established PDU sessions list
+      description: |
+        Get the established PDU sessions list.
+      operationId: get_pdu_sessions
+      responses:
+        "200":
+          description: The list of established PDU session
+          content:
+            application/json:
+              schema:
+                minItems: 0
+                type: array
+                items:
+                  $ref: '#/components/schemas/EstablishedSession'
+                x-content-type: application/json
+        default:
+          description: Generic-error
+      x-openapi-router-controller: server.controllers.default_controller
     post:
       summary: create a new PDU Session
       description: |
@@ -56,10 +74,6 @@ paths:
       responses:
         "200":
           description: Pdu Session sucessfully established
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SessionInfo'
         default:
           description: Generic-error
       x-openapi-router-controller: server.controllers.default_controller
@@ -68,24 +82,40 @@ components:
     Supi:
       pattern: "^(imsi-[0-9]{5,15}|nai-.+|gci-.+|gli-.+|.+)$"
       type: string
-    SessionInfo:
+    EstablishedSession:
       required:
-      - id
+      - dnn
       - ipAddress
+      - sst
       type: object
       properties:
         id:
           type: integer
+        sst:
+          maximum: 255
+          minimum: 0
+          type: integer
+        sd:
+          pattern: "^[A-Fa-f0-9]{6}$"
+          type: string
+        dnn:
+          type: string
+        pduSessionType:
+          $ref: '#/components/schemas/PduSessionType'
         ipAddress:
           $ref: '#/components/schemas/IpAddress'
         emergency:
           type: boolean
       example:
+        sd: sd
+        sst: 153
+        dnn: dnn
         ipAddress:
           ipv6Addr: ""
           ipv4Addr: ipv4Addr
           ipv6Prefix: ""
         emergency: true
+        pduSessionTypes: ""
         id: 0
     SelectedSession:
       required:

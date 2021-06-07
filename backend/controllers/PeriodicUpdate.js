@@ -6,7 +6,7 @@ let updateProcessIds = []
 let started = false;
 
 function getGnbConnectionStatus() {
-    return deviceInfoHandler.getGnbConnectionStatus()
+    deviceInfoHandler.getGnbConnectionStatus()
         .then(result => {
             let receivedStatus = result.status
             let receivedCampedCell = result['camped-cell']

@@ -13,7 +13,8 @@ with open(ue_config_file, 'r') as stream:
 		loaded_file = yaml.safe_load(stream)
 		ue_imsi = loaded_file['supi']
 		subprocess.Popen("{base_dir}/build/nr-ue -c {ue_config}".format(base_dir=ueransim_base_dir,
-		                                                                ue_config=ue_config_file), shell=True)
+		                                                                ue_config=ue_config_file),
+		                 shell=True)
 		time.sleep(0.5)  # make sure UE is started
 		cli_command_handler = CliCommandHandler(ue_imsi)
 	except yaml.YAMLError as exc:

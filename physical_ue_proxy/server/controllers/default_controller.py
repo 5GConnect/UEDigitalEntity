@@ -1,17 +1,13 @@
 import connexion
-import six
 
 from server.models.selected_session import SelectedSession  # noqa: E501
 from server.models.supi import Supi  # noqa: E501
 from server.models.gnb_connection_state import GnbConnectionState  # noqa: E501
-from server.models.cell_connection_status import CellConnectionStatus  # noqa: E501
-from server.models.base_model_ import Model
-from server import util
 from server.controllers.config import *
 
 
 def create_pdu_session(body):  # noqa: E501
-	"""create a new PDU Session
+  """create a new PDU Session
 
     Create a new PDU Session for the UE.  # noqa: E501
 
@@ -21,32 +17,41 @@ def create_pdu_session(body):  # noqa: E501
     :rtype: SessionInfo
     """
 
-	if connexion.request.is_json:
-		body = SelectedSession.from_dict(connexion.request.get_json())  # noqa: E501
-		result = cli_command_handler.establish_pdu_session(body.sst, body.sd, body.dnn, body.pdu_session_type)
-		return result
+  if connexion.request.is_json:
+    body = SelectedSession.from_dict(connexion.request.get_json())  # noqa: E501
+    return cli_command_handler.establish_pdu_session(body.sst, body.sd, body.dnn, body.pdu_session_type)
 
 
 def get_device_imsi():  # noqa: E501
-	"""get the device imsi
+  """get the device imsi
 
-	Get the imsi of the controlled device  # noqa: E501
+  Get the imsi of the controlled device  # noqa: E501
 
 
-	:rtype: Supi
-	"""
-	result = cli_command_handler.get_info()
-	return Supi.from_dict(result['supi'])
+  :rtype: Supi
+  """
+  result = cli_command_handler.get_info()
+  return Supi.from_dict(result['supi'])
 
 
 def get_gnb_connection_state():  # noqa: E501
-	"""get the device status
+  """get the device status
 
-	Get the device status  # noqa: E501
+  Get the device status  # noqa: E501
 
 
-	:rtype: DeviceStatus
-	"""
-	status = cli_command_handler.get_status()
-	t = GnbConnectionState(status=status["cm-state"], camped_cell=status["camped-cell"])
-	return t
+  :rtype: DeviceStatus
+  """
+  status = cli_command_handler.get_status()
+  return GnbConnectionState(status=status["cm-state"], camped_cell=str(status["current-cell"]))
+
+
+def get_pdu_sessions():  # noqa: E501
+  """get the established PDU sessions list
+
+    Get the established PDU sessions list.  # noqa: E501
+
+
+    :rtype: List[SessionInfo]
+    """
+  return cli_command_handler.get_pdu_sessions()
