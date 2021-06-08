@@ -23,7 +23,7 @@ def create_pdu_session(body):  # noqa: E501
     return cli_command_handler.establish_pdu_session(body.sst, body.sd, body.dnn, body.pdu_session_type)
 
 
-def release_pdu_session(body)
+def release_pdu_session(body):
   if connexion.request.is_json:
     body = SelectedPDU.from_dict(connexion.request.get_json())  # noqa: E501
     return cli_command_handler.release_pdu_session(body.pdu_id)
