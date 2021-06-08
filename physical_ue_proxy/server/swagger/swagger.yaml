@@ -77,6 +77,23 @@ paths:
         default:
           description: Generic-error
       x-openapi-router-controller: server.controllers.default_controller
+    delete:
+      summary: Delete a specific PDU Session
+      description: |
+        Delete a PDU Session previusly created for the UE.
+      operationId: delete_pdu_session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectedPDU'
+        required: true
+      responses:
+        "200":
+          description: Pdu Session sucessfully deleted
+        default:
+          description: Generic-error
+      x-openapi-router-controller: server.controllers.default_controller
 components:
   schemas:
     Supi:
@@ -142,6 +159,15 @@ components:
         - IPV4V6
         - UNSTRUCTURED
         - ETHERNET
+    SelectedPDU:
+      required:
+      - pdu_id
+      type: object
+      properties:
+        pdu_id:
+          maximum: 255
+          minimum: 0
+          type: integer
     CellConnectionStatus:
       anyOf:
       - type: string

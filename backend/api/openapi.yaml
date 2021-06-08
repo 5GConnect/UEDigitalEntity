@@ -120,6 +120,23 @@ paths:
         default:
           description: Generic-error
       x-swagger-router-controller: ConnectionState
+    delete:
+      summary: delete a specific PDU Session
+      description: |
+        Delete a PDU Session previusly created for the UE.
+      operationId: deletePDUSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectedPDU'
+      responses:
+        "200":
+          description: Pdu Session sucessfully deleted
+        default:
+          description: Generic-error
+      x-swagger-router-controller: ConnectionState
 
 components:
   schemas:
@@ -275,6 +292,16 @@ components:
           type: string
         pduSessionType:
           $ref: '#/components/schemas/PduSessionType'
+
+    SelectedPDU:
+      required:
+      - pdu_id
+      type: object
+      properties:
+        pdu_id:
+          maximum: 255
+          minimum: 0
+          type: integer
 
     EstablishedSession:
       required:
