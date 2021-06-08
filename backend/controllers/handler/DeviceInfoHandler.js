@@ -29,9 +29,9 @@ module.exports.establishPduSession = (selected_session) => {
 /**
  * @returns a promise resolved with a state of the PDU session deletion process or rejected with an error
  */
- module.exports.releasePduSession = (pdu_id) => {
-  logger.info("Requesting PDU Session deletion");
-  return requestManager.makeARequestWithBodyData('DELETE', `${process.env.PHYSICAL_UE_PROXY_ADDRESS}/pdu-session`, pdu_id, data => data)
+module.exports.releasePduSession = (pdu_id) => {
+    logger.info("Requesting PDU Session deletion");
+    return requestManager.makeARequest('DELETE', `${process.env.PHYSICAL_UE_PROXY_ADDRESS}/pdu-session/${pdu_id}`, data => data)
 }
 
 module.exports.getPduSessions = () => {

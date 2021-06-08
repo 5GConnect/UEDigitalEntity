@@ -22,13 +22,13 @@ module.exports.createPDUSession = function createPDUSession(req, res, next) {
 };
 
 module.exports.deletePDUSession = function getUEPDUSessions(req, res, next) {
-  let pdu_id = req.body.pdu_id
-  deviceInfoHandler.releasePduSession(pdu_id)
-      .then(result => {
-          logger.debug(`Sending response: ${JSON.stringify(result)}`);
-          res.status(200).send(result)
-      })
-      .catch(errorObject => errorObject.status ? res.status(errorObject.status).send(errorObject.message) : res.send(errorObject.message))
+    let pdu_id = req.params.pduId
+    deviceInfoHandler.releasePduSession(pdu_id)
+        .then(result => {
+            logger.debug(`Sending response: ${JSON.stringify(result)}`);
+            res.status(200).send(result)
+        })
+        .catch(errorObject => errorObject.status ? res.status(errorObject.status).send(errorObject.message) : res.send(errorObject.message))
 };
 
 module.exports.getUEPDUSessions = function getUEPDUSessions(req, res, next) {

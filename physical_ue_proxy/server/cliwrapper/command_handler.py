@@ -72,7 +72,7 @@ class CliCommandHandler:
   def get_status(self):
     return self.__run_command_and_get_dict(CliCommand.Status.value)
 
-  def release_pdu_session(seld, pdu_id):
+  def release_pdu_session(self, pdu_id):
     self.__run_command(
       CliCommand.PduSessionRelease.value.format(session_id=pdu_id))
     return "PDU session release triggered"
