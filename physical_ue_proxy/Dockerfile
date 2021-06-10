@@ -45,6 +45,7 @@ WORKDIR /usr/src/app
 
 COPY requirements.txt /usr/src/app/
 
+RUN apk --update --no-cache gcc musl-dev
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . /usr/src/app
@@ -53,4 +54,4 @@ COPY . /usr/src/app
 
 ENTRYPOINT ["python3"]
 
-CMD ["-m", "swagger_server"]
+CMD ["-m", "server"]

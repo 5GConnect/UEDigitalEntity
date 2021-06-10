@@ -5,9 +5,9 @@ from __future__ import absolute_import
 from flask import json
 from six import BytesIO
 
-from swagger_server.models.selected_session import SelectedSession  # noqa: E501
-from swagger_server.models.supi import Supi  # noqa: E501
-from swagger_server.test import BaseTestCase
+from server.models.selected_session import SelectedSession  # noqa: E501
+from server.models.supi import Supi  # noqa: E501
+from server.test import BaseTestCase
 
 
 class TestDefaultController(BaseTestCase):
