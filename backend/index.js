@@ -31,6 +31,10 @@ var oasDoc = jsyaml.safeLoad(spec);
 var app = express();
 if (process.env.NODE_ENV === 'development') {
     app.use(cors())
+} else if (process.env.NODE_ENV === 'production') {
+    app.use(cors({
+        origin: "http://137.204.107.63:55000"
+    }))
 }
 app.use(express.json())
 

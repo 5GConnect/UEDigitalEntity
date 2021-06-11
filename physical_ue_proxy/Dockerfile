@@ -33,19 +33,38 @@ RUN version=3.20 && \
 
 # Clone and build UERANSIM
 RUN git clone https://github.com/aligungr/UERANSIM && \
-    cd UERANSIM && git checkout tags/v3.1.9 && \
+    cd UERANSIM && git checkout tags/v3.2.0 && \
     make -j`nproc`
 
-FROM python:3.6-alpine
+# Build final image
+FROM ubuntu:bionic
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 COPY --from=builder /UERANSIM/build /UERANSIM/build
+COPY --from=builder /UERANSIM/config /UERANSIM/config
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libsctp-dev \
+        lksctp-tools \
+        iproute2 \
+        iptables \
+        netbase \
+        ifupdown \
+        net-tools \
+        iputils-ping && \
+    apt-get autoremove -y && apt-get autoclean
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY requirements.txt /usr/src/app/
 
-RUN apk --update --no-cache gcc musl-dev
+#RUN apk add --update --no-cache gcc musl-dev bash
+#RUN  apt-get install python3.6 -y
+RUN apt update
+RUN apt-get install python3-pip -y
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . /usr/src/app
