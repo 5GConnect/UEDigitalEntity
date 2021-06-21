@@ -10,13 +10,11 @@ var http = require('http');
 const ws = require('ws');
 var cors = require('cors')
 
-const logger = require('./utils/logger');
 var serverPort = process.env.PORT;
 var oasTools = require('oas-tools');
 var jsyaml = require('js-yaml');
 var fs = require('fs');
 var express = require('express');
-
 
 global.logger = require('./utils/logger');
 
@@ -43,6 +41,8 @@ oasTools.initialize(oasDoc, app, function() {
     let server = http.createServer(app).listen(serverPort, function() {
         logger.info(`Your server is listening on port ${serverPort}`);
     });
+    const discoveryController = require("./controllers/DiscoveryService")
+    discoveryController.sendPeriodicalSignal();
     const wss = new ws.Server({ server: server });
     module.exports = wss;
     wss.on('connection', (ws) => {
