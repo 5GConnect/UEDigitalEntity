@@ -6,7 +6,9 @@ module.exports.sendSignal = (ueID) => {
     logger.info("Sending registartion or keep alive signal...");
     let bodyData = {
         'supi': ueID,
-        'ip': process.env.ADDRESS,
+        'ip': {
+            'ipv4Addr': process.env.ADDRESS
+        },
         'port': process.env.PORT
     }
     return requestManager.makeARequestWithBodyData('POST', `${process.env.SERVICE_REGISTRY}/UE`, bodyData, data => data)
