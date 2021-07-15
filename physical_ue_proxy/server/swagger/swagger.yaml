@@ -8,6 +8,22 @@ info:
   version: 1.0.0
 
 paths:
+  /ping-task:
+    post:
+      summary: execute a ping
+      description: |
+        execute a ping command
+      operationId: execute_ping
+      responses:
+        "200":
+          description: The device imsi
+          content:
+            text/plain:
+              schema:
+                type: string
+        default:
+          description: Generic-error
+      x-openapi-router-controller: server.controllers.default_controller
   /device-id:
     get:
       summary: get the device imsi

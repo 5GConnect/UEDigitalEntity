@@ -1,11 +1,12 @@
+import sys
+
 import connexion
 
 from server.models.selected_session import SelectedSession  # noqa: E501
-from server.models.selected_pdu_id import SelectedPDUId  # noqa: E501  # noqa: E501
 from server.models.supi import Supi  # noqa: E501
 from server.models.gnb_connection_state import GnbConnectionState  # noqa: E501
 from server.controllers.config import *
-
+from pythonping import  ping
 
 def create_pdu_session(body):  # noqa: E501
   """create a new PDU Session
@@ -60,3 +61,12 @@ def get_pdu_sessions():  # noqa: E501
     :rtype: List[SessionInfo]
     """
   return cli_command_handler.get_pdu_sessions()
+
+def execute_ping():
+  try:
+    result_list = ping("google.com")
+    return result_list.__repr__(), 200
+  except PermissionError:
+    return "Physical proxy should run with sudo privileges", 501
+  except:
+    return "Generic error", 500
