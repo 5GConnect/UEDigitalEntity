@@ -6,7 +6,6 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
-
 paths:
   /ping-task:
     post:
@@ -14,15 +13,26 @@ paths:
       description: |
         execute a ping command
       operationId: execute_ping
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PingTaskParameters'
       responses:
         "200":
-          description: The device imsi
+          description: The results of ping
           content:
             text/plain:
               schema:
                 type: string
-        default:
-          description: Generic-error
+                x-content-type: text/plain
+        "501":
+          description: Error in ping command
+          content:
+            text/plain:
+              schema:
+                type: string
       x-openapi-router-controller: server.controllers.default_controller
   /device-id:
     get:
@@ -119,6 +129,15 @@ components:
     Supi:
       pattern: "^(imsi-[0-9]{5,15}|nai-.+|gci-.+|gli-.+|.+)$"
       type: string
+    PingTaskParameters:
+      type: object
+      required:
+        - address
+      properties:
+        address:
+          type: string
+        pduSessionIp:
+          type: string
     EstablishedSession:
       required:
       - dnn

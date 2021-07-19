@@ -9,6 +9,33 @@ info:
 servers:
 - url: /
 paths:
+  /ping-task:
+    post:
+      summary: execute a ping
+      description: |
+        execute a ping command
+      operationId: executeping
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PingTaskParameters'
+      responses:
+        "200":
+          description: The results of ping
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "501":
+          description: Error in ping command
+          content:
+            text/plain:
+              schema:
+                type: string
+      x-swagger-router-controller: NetworkCommand
   /requirments:
     get:
       summary: get device requirments
@@ -144,6 +171,16 @@ paths:
 
 components:
   schemas:
+
+    PingTaskParameters:
+      type: object
+      required:
+        - address
+      properties:
+        address:
+          type: string
+        pduSessionIp:
+          type: string
 
     Requirments:
       type: object
