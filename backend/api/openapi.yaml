@@ -36,12 +36,12 @@ paths:
               schema:
                 type: string
       x-swagger-router-controller: NetworkCommand
-  /requirments:
+  /requirements:
     get:
-      summary: get device requirments
+      summary: get device requirements
       description: |
-        Get the requirments of the associated physical device
-      operationId: getUERequirments
+        Get the requirements of the associated physical device
+      operationId: getUERequirements
       responses:
         "200":
           description: The requested requirments
@@ -49,26 +49,24 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: '#/components/schemas/Requirments'
                 x-content-type: application/json
         "404":
           description: No requirment found
       x-swagger-router-controller: Requirments
     post:
-      summary: create device requirments
+      summary: create device requirements
       description: |
         Create the requirments of the associated physical device
-      operationId: createUERequirments
+      operationId: createUERequirements
       responses:
         "200":
           description: Requirments sucessefully created
       x-swagger-router-controller: Requirments
     patch:
-      summary: update device requirments
+      summary: update device requirements
       description: |
         Update the requirments of the associated physical device
-      operationId: updateUERequirments
+      operationId: updateUERequirements
       responses:
         "200":
           description: The requirments to be updated

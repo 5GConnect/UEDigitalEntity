@@ -41,23 +41,23 @@ oasTools.initialize(oasDoc, app, function() {
     let server = http.createServer(app).listen(serverPort, function() {
         logger.info(`Your server is listening on port ${serverPort}`);
     });
-    const discoveryController = require("./controllers/DiscoveryService")
-    discoveryController.sendPeriodicalSignal();
+    //const discoveryController = require("./controllers/DiscoveryService")
+    //discoveryController.sendPeriodicalSignal();
     const wss = new ws.Server({ server: server });
     module.exports = wss;
-    wss.on('connection', (ws) => {
-        logger.info('Client connected');
-        const updateController = require("./controllers/PeriodicUpdate")
-        updateController.startPolling();
-        ws.on('close', () => {
-            logger.info('Client disconnected')
-            if (wss.clients.size === 0) {
-                /*
-                 * To save resources, the polling cycle to maintain the device status updated
-                 * is stopped when there are no connected dashboards
-                 */
-                updateController.stopPolling();
-            }
-        });
-    });
+    // wss.on('connection', (ws) => {
+    //     logger.info('Client connected');
+    //     const updateController = require("./controllers/PeriodicUpdate")
+    //     updateController.startPolling();
+    //     ws.on('close', () => {
+    //         logger.info('Client disconnected')
+    //         if (wss.clients.size === 0) {
+    //             /*
+    //              * To save resources, the polling cycle to maintain the device status updated
+    //              * is stopped when there are no connected dashboards
+    //              */
+    //             updateController.stopPolling();
+    //         }
+    //     });
+    // });
 });
