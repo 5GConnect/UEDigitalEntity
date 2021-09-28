@@ -36,48 +36,47 @@ paths:
               schema:
                 type: string
       x-swagger-router-controller: NetworkCommand
-  /requirements:
-    get:
-      summary: get device requirements
-      description: |
-        Get the requirements of the associated physical device
-      operationId: getUERequirements
-      responses:
-        "200":
-          description: The requested requirments
-          content:
-            application/json:
-              schema:
-                type: array
-                x-content-type: application/json
-        "404":
-          description: No requirment found
-      x-swagger-router-controller: Requirments
-    post:
-      summary: create device requirements
-      description: |
-        Create the requirments of the associated physical device
-      operationId: createUERequirements
-      responses:
-        "200":
-          description: Requirments sucessefully created
-      x-swagger-router-controller: Requirments
-    patch:
-      summary: update device requirements
-      description: |
-        Update the requirments of the associated physical device
-      operationId: updateUERequirements
-      responses:
-        "200":
-          description: The requirments to be updated
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Requirments'
-                x-content-type: application/json
-      x-swagger-router-controller: Requirments
+  # /requirments:
+  #   get:
+  #     summary: get device requirments
+  #     description: |
+  #       Get the requirments of the associated physical device
+  #     operationId: getUERequirments
+  #     responses:
+  #       "200":
+  #         description: The requested requirments
+  #         content:
+  #           application/json:
+  #             schema:
+  #                 $ref: '#/components/schemas/SelectedSession'
+  #       "404":
+  #         description: No requirment found
+  #     x-swagger-router-controller: Requirments
+  #   post:
+  #     summary: create device requirments
+  #     description: |
+  #       Create the requirments of the associated physical device
+  #     operationId: createUERequirments
+  #     responses:
+  #       "200":
+  #         description: Requirments sucessefully created
+  #     x-swagger-router-controller: Requirments
+  #   patch:
+  #     summary: update device requirments
+  #     description: |
+  #       Update the requirments of the associated physical device
+  #     operationId: updateUERequirments
+  #     responses:
+  #       "200":
+  #         description: The requirments to be updated
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: array
+  #               items:
+  #                 $ref: '#/components/schemas/Requirments'
+  #               x-content-type: application/json
+  #     x-swagger-router-controller: Requirments
   /gnb-connection-state:
     get:
       summary: get the UE connection state with gNB
@@ -167,6 +166,32 @@ paths:
           description: Generic-error
       x-swagger-router-controller: ConnectionState
 
+  /pdu-session/{requirement}:
+    get:
+      summary: Get a pdu session suited for the specified requirement
+      description: |
+        Get a pdu session suited for the specified requirement.
+      operationId: getPDUSessionByRequirement
+      parameters:
+      - name: requirement
+        in: path
+        description: The requirement to be satisfied
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Pdu Session more suitable to requirements
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SelectedSessionByRequirment'
+        default:
+          description: Generic-error
+      x-swagger-router-controller: ConnectionState
+
 components:
   schemas:
 
@@ -180,15 +205,15 @@ components:
         pduSessionIp:
           type: string
 
-    Requirments:
-      type: object
-      properties:
-        field1:
-          type: integer
-        field2:
-          type: string
-        field3:
-          type: string
+    # Requirments:
+    #   type: object
+    #   properties:
+    #     field1:
+    #       type: integer
+    #     field2:
+    #       type: string
+    #     field3:
+    #       type: string
 
     SubscriptionData:
       type: object
@@ -318,6 +343,21 @@ components:
     SelectedSession:
       required:
       - sst
+      type: object
+      properties:
+        sst:
+          maximum: 255
+          minimum: 0
+          type: integer
+        sd:
+          pattern: "^[A-Fa-f0-9]{6}$"
+          type: string
+        dnn:
+          type: string
+        pduSessionType:
+          $ref: '#/components/schemas/PduSessionType'
+
+    SelectedSessionByRequirment:
       type: object
       properties:
         sst:

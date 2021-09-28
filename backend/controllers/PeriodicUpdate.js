@@ -25,6 +25,7 @@ function getGnbConnectionStatus() {
 }
 
 function manageGnbConnectionStatusUpdate() {
+    getGnbConnectionStatus()
     var processId = setInterval(function() {
         getGnbConnectionStatus()
     }, process.env.POLLING_STATUS_UPDATE_TIME_IN_MS);
