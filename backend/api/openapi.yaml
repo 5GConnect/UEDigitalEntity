@@ -181,6 +181,17 @@ paths:
         explode: false
         schema:
           type: string
+      - name: endPointIp
+        in: query
+        description: the ip address of the endpoint to reach through the pdu
+        schema:
+          $ref: '#/components/schemas/Ipv4Addr'
+      - name: endPointPort
+        in: query
+        description: the port of the endpoint to reach through the pdu
+        schema:
+          type: integer
+
       responses:
         "200":
           description: Pdu Session more suitable to requirements
@@ -204,16 +215,6 @@ components:
           type: string
         pduSessionIp:
           type: string
-
-    # Requirments:
-    #   type: object
-    #   properties:
-    #     field1:
-    #       type: integer
-    #     field2:
-    #       type: string
-    #     field3:
-    #       type: string
 
     SubscriptionData:
       type: object
@@ -356,6 +357,10 @@ components:
           type: string
         pduSessionType:
           $ref: '#/components/schemas/PduSessionType'
+        endPointIp:
+          $ref: '#/components/schemas/Ipv4Addr'
+        endPointPort:
+          type: integer
 
     SelectedSessionByRequirment:
       type: object

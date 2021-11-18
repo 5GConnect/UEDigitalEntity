@@ -23,7 +23,8 @@ def create_pdu_session(body):  # noqa: E501
 
   if connexion.request.is_json:
     body = SelectedSession.from_dict(connexion.request.get_json())  # noqa: E501
-    return cli_command_handler.establish_pdu_session(body.sst, body.sd, body.dnn, body.pdu_session_type)
+    return cli_command_handler.establish_pdu_session(body.sst, body.sd, body.dnn, body.pdu_session_type,
+                                                     body.end_point_ip, body.end_point_port)
 
 
 def delete_pdu_session(pdu_id):
@@ -86,16 +87,16 @@ def execute_ping(body):  # noqa: E501
       )
       interface = interface.rstrip(":\n")
       command = ['ping', '-c', '4', '-i', '0.2', '-W', '1', body.address] if (not interface) else [
-          'ping', '-c',
-          '4', '-i', '0.2', '-W', '1',
-          '-I',
-          interface,
-          body.address]
+        'ping', '-c',
+        '4', '-i', '0.2', '-W', '1',
+        '-I',
+        interface,
+        body.address]
       response = subprocess.check_output(
-          command,
-          stderr=subprocess.STDOUT,  # get all output
-          universal_newlines=True  # return string not bytes
-        )
+        command,
+        stderr=subprocess.STDOUT,  # get all output
+        universal_newlines=True  # return string not bytes
+      )
     except subprocess.CalledProcessError as exc:
       response = exc.output, 501
     return response

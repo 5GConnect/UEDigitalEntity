@@ -12,7 +12,7 @@ with open(ue_config_file, 'r') as stream:
   try:
     loaded_file = yaml.safe_load(stream)
     ue_imsi = loaded_file['supi']
-    subprocess.Popen("{base_dir}/build/nr-ue -c {ue_config}".format(base_dir=ueransim_base_dir,
+    subprocess.Popen("{base_dir}/build/nr-ue -r -c {ue_config}".format(base_dir=ueransim_base_dir,
                                                                     ue_config=ue_config_file),
                      shell=True)
     time.sleep(0.5)  # make sure UE is started
