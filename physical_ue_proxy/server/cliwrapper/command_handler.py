@@ -111,7 +111,7 @@ class CliCommandHandler:
 			pdu_sessions = self.get_pdu_sessions()
 			if not any(pdu_session.id == pdu_id for pdu_session in pdu_sessions):
 				present = False
-				if pdu_id in routing_parameters:
+				if pdu_id in self.pdu_session_id_to_routing_param:
 					routing_parameters = self.pdu_session_id_to_routing_param[pdu_id]
 					remove_routing(table_name=routing_parameters['table_name'],
 					               table_id=routing_parameters['table_id'],
@@ -124,27 +124,27 @@ class CliCommandHandler:
 	def establish_pdu_session(self, sst, sd, dnn, session_type, end_point_ip, end_point_port):
 		self.__run_command(
 			CliCommand.PduSessionEstablish.value.format(session_type=session_type, sst=sst, sd=sd, dnn=dnn))
-		# if end_point_ip is not None and end_point_port is not None:
-		found = False
-		while not found:
-			pdu_sessions = self.get_pdu_sessions()
-			for pdu_session in pdu_sessions:
-				if pdu_session.id == self.last_pdu_session_id:
-					# insert rule for uesimtun{last_pdu_session_id-1}
-					random_value = str(random.randint(500, 1000))
-					table_name = f"ueransim{random_value}"
-					self.pdu_session_id_to_routing_param[self.last_pdu_session_id] = {
-						"table_name": table_name,
-						"table_id": random_value,
-						"destination_port": end_point_port,
-						"destination_address": end_point_ip
-					}
-					setup_routing(table_id=random_value, table_name=table_name, destination_port=end_point_port,
+		if end_point_ip is not None and end_point_port is not None:
+			found = False
+			while not found:
+				pdu_sessions = self.get_pdu_sessions()
+				for pdu_session in pdu_sessions:
+					if pdu_session.id == self.last_pdu_session_id:
+						# insert rule for uesimtun{last_pdu_session_id-1}
+						random_value = str(random.randint(500, 1000))
+						table_name = f"ueransim{random_value}"
+						self.pdu_session_id_to_routing_param[self.last_pdu_session_id] = {
+							"table_name": table_name,
+							"table_id": random_value,
+							"destination_port": end_point_port,
+							"destination_address": end_point_ip
+						}
+						setup_routing(table_id=random_value, table_name=table_name, destination_port=end_point_port,
 					              destination_address=end_point_ip,
 					              interface_name=f"uesimtun{self.last_pdu_session_id - 1}")
-					self.last_pdu_session_id += 1
-					found = True
-					break
+						self.last_pdu_session_id += 1
+						found = True
+						break
 		return "PDU session creation triggered"
 
 	def get_pdu_sessions(self):
