@@ -6,6 +6,7 @@ from os import read
 import yaml
 import random
 import logging
+import time
 
 from server.cliwrapper.commands import CliCommand
 from server.models.ip_address import IpAddress
@@ -66,6 +67,7 @@ class CliCommandHandler:
   imsi = None
   expected_interface_number = 0
   pdu_session_id_to_routing_param = {}
+  timeout = 5  # 5 seconds timeout for PDU session establishment/release
 
   def __init__(self, imsi):
     self.imsi = imsi
@@ -105,51 +107,57 @@ class CliCommandHandler:
     return self.__run_command_and_get_dict(CliCommand.Status.value)
 
   def release_pdu_session(self, pdu_id):
+    interface_removed = False
     self.__run_command(
       CliCommand.PduSessionRelease.value.format(session_id=pdu_id))
-    if pdu_id-1 in self.pdu_session_id_to_routing_param:
-      while True:
-        interface_information = get_output(
-          subprocess.Popen(f"ip a | grep uesimtun{pdu_id - 1}", shell=True,
-                           stdin=subprocess.PIPE,
-                           stdout=subprocess.PIPE,
-                           encoding='utf8'))
-        if interface_information == "":
-          routing_parameters = self.pdu_session_id_to_routing_param[pdu_id-1]
+    start_time = time.time()
+    while time.time() < start_time + self.timeout:
+      interface_information = get_output(
+        subprocess.Popen(f"ip a | grep uesimtun{pdu_id - 1}", shell=True,
+                         stdin=subprocess.PIPE,
+                         stdout=subprocess.PIPE,
+                         encoding='utf8'))
+      if interface_information == "":
+        if pdu_id - 1 in self.pdu_session_id_to_routing_param:
+          routing_parameters = self.pdu_session_id_to_routing_param[pdu_id - 1]
           remove_routing(table_name=routing_parameters['table_name'],
                          table_id=routing_parameters['table_id'],
                          destination_port=routing_parameters['destination_port'],
                          destination_address=routing_parameters['destination_address'])
-          self.pdu_session_id_to_routing_param.pop(pdu_id-1, None)
+          self.pdu_session_id_to_routing_param.pop(pdu_id - 1, None)
           self.expected_interface_number -= 1
-          break
-    return "PDU session release triggered"
+        interface_removed = True
+        break
+    return "PDU session released" if interface_removed else "An error occurred in PDU session release"
 
   def establish_pdu_session(self, sst, sd, dnn, session_type, end_point_ip, end_point_port):
+    interface_created = False
     self.__run_command(
       CliCommand.PduSessionEstablish.value.format(session_type=session_type, sst=sst, sd=sd, dnn=dnn))
-    if end_point_ip is not None and end_point_port is not None:
-      while True:
-        random_value = str(random.randint(500, 1000))
-        table_name = f"ueransim{random_value}"
-        self.pdu_session_id_to_routing_param[self.expected_interface_number] = {
-          "table_name": table_name,
-          "table_id": random_value,
-          "destination_port": end_point_port,
-          "destination_address": end_point_ip
-        }
-        interface_information = get_output(
-          subprocess.Popen(f"ip a | grep uesimtun{self.expected_interface_number}", shell=True, stdin=subprocess.PIPE,
-                           stdout=subprocess.PIPE,
-                           encoding='utf8'))
+    start_time = time.time()
+    while time.time() < start_time + self.timeout:
+      interface_information = get_output(
+        subprocess.Popen(f"ip a | grep uesimtun{self.expected_interface_number}", shell=True, stdin=subprocess.PIPE,
+                         stdout=subprocess.PIPE,
+                         encoding='utf8'))
+      if interface_information != "":
         logging.getLogger().log(level=50, msg=f"{interface_information}")
-        if interface_information != "":
+        if end_point_ip is not None and end_point_port is not None:
+          random_value = str(random.randint(500, 1000))
+          table_name = f"ueransim{random_value}"
+          self.pdu_session_id_to_routing_param[self.expected_interface_number] = {
+            "table_name": table_name,
+            "table_id": random_value,
+            "destination_port": end_point_port,
+            "destination_address": end_point_ip
+          }
           setup_routing(table_id=random_value, table_name=table_name, destination_port=end_point_port,
                         destination_address=end_point_ip,
                         interface_name=f"uesimtun{self.expected_interface_number}")
           self.expected_interface_number += 1
-          break
-    return "PDU session creation triggered"
+        interface_created = True
+        break
+    return "PDU session created" if interface_created else "An error occurred in PDU session establishment"
 
   def get_pdu_sessions(self):
     command_results = self.__run_command_and_get_dict(CliCommand.PduSessionList.value)
